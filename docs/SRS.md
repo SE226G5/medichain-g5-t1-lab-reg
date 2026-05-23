@@ -1,100 +1,175 @@
-﻿# Software Requirements Specification (SRS)
-## Project: [Insert the Parent System Name, e.g., Hospital ERP System]
-## Module/Subsystem: [Insert Your Module Name, e.g., Laboratory Management, Clinical System, OR "Master Integration System" if you are the integration team]
-**Version:** 1.0  
-**Date:** [YYYY-MM-DD]
+# Software Requirements Specification (SRS)
+## Module: LAB-REG — Specimen Registration & Barcoding
+### Project: MediChain — نظام إدارة سلسلة المختبرات الطبية
 
 ---
 
-## 1. Introduction
-### 1.1 Purpose
-* **Instruction:** Describe the specific purpose of this document. Who is the intended audience? If you are a subsystem team, explain how this document defines your specific module. If you are the Integration Team (Team Leaders), explain how this document governs the entire system.
+## 1. Module Overview
 
-### 1.2 Scope
-* **Instruction:** Define the boundaries of your system. 
-  * What are the core goals and benefits?
-  * **Crucial:** Explicitly list what your system *will* do and what it *will NOT* do to prevent overlap with other teams.
-
-### 1.3 Definitions, Acronyms, and Abbreviations
-* **Instruction:** Provide a table defining all technical terms, acronyms, or domain-specific language (e.g., medical terms, API, ERP) used in this document so all teams share a common understanding.
-
-### 1.4 References
-* **Instruction:** List all referenced documents. This must include:
-  * IEEE 830 Standard.
-  * Links to shared architectural documents or API contracts agreed upon with the Integration Team.
-
-### 1.5 Overview
-* **Instruction:** Briefly explain how the rest of this SRS document is organized.
+This module handles specimen registration and barcoding within the MediChain system. It ensures every sample is uniquely identified, linked to the correct destination laboratory, and fully documented before moving to the next phase.
 
 ---
 
-## 2. Overall Description
-### 2.1 Product Perspective
-* **Instruction:** Explain how your software fits into the bigger picture. 
-  * **For Subsystem Teams:** State clearly that your module is a component of a larger system. How does it interact with the master database or other modules?
-  * **For the Integration Team:** Provide the high-level block diagram showing all subsystems and their connection points.
+## 2. Team Members & Responsibilities
 
-*   **2.1.1 System Interfaces:** [List the exact integration points and APIs your module exposes to, or consumes from, other teams].
-*   **2.1.2 User Interfaces:** [Describe the logical characteristics of your UI. Are you following a shared design system?].
-*   **2.1.3 Hardware Interfaces:** [List any required hardware, e.g., barcode scanners for labs, or state "None"].
-*   **2.1.4 Software Interfaces:** [Specify OS requirements, database dependencies, or third-party libraries].
-*   **2.1.5 Communications Interfaces:** [Define networking protocols used, e.g., HTTP/REST, WebSockets].
-*   **2.1.6 Memory & Operational Constraints:** [State minimum RAM, storage, and normal operating assumptions].
-
-### 2.2 Product Functions
-* **Instruction:** Provide a high-level, bulleted summary of the major functions your software performs. Do not go into deep detail here (save it for Section 3).
-
-### 2.3 User Characteristics
-* **Instruction:** Who will use your specific module? (e.g., Lab Technicians, Doctors, System Admins). Describe their technical expertise level.
-
-### 2.4 Constraints, Assumptions, and Dependencies
-* **Instruction:** List any factors that limit your development (e.g., medical data privacy laws, reliance on another team finishing their API first, specific coding languages mandated).
+| Member Name | Role | Primary Responsibility |
+|-------------|------|------------------------|
+| حسام الحر | Student 1 (Leader) | Integration & Architecture, Component Diagrams, API Specs, Team Coordination |
+| ناجي القاسم | Student 2 | Requirements & Analysis, Functional Requirements, Use Case Diagrams |
+| يزن كحيلة | Student 3 | Process Modeling, Activity Diagrams, Business Rules Validation |
+| يوسف بوظان | Student 4 | Data Design, ERD, Database Schema, Class Diagrams |
 
 ---
 
-## 3. Specific Requirements (Agile Approach)
-* **Instruction:** This section translates traditional functional requirements into Agile User Stories. Every feature must be traceable to the project management board.
+## 3. Functional Requirements
 
-### 3.1 External Interface Requirements
-* **Instruction:** Detail the exact data formats, API endpoints, and UI layouts needed for the interfaces mentioned in section 2.1.
-
-### 3.2 System Features & User Stories
-* **Instruction:** Organize your requirements by Feature. For each feature, write the underlying requirements as User Stories and link them to your GitHub Issues.
-
-#### 3.2.1 Feature: [Insert Feature Name, e.g., Patient Registration]
-*   **Description:** [Briefly describe the feature].
-*   **Priority:** [High / Medium / Low].
-*   **User Stories:**
-    *   **Story 1:** As a [User Role], I want to [Action/Goal] so that [Benefit/Value]. 
-        * *Acceptance Criteria:* [List what must be true for this to be considered 'Done'].
-        * *GitHub Issue:* [Link to Issue, e.g., #12]
-    *   **Story 2:** As a [User Role], I want to [Action/Goal] so that [Benefit/Value].
-        * *Acceptance Criteria:* [List criteria].
-        * *GitHub Issue:* [Link to Issue, e.g., #13]
-
-#### 3.2.2 Feature: [Insert Feature Name]
-*   [Repeat the structure above for all module features].
-
-### 3.3 Performance Requirements
-* **Instruction:** Specify quantitative limits. (e.g., "The module must return query results in under 2 seconds for up to 50 concurrent users").
-
-### 3.4 Logical Database Requirements
-* **Instruction:** Describe the data entities managed by your module. If you are using a shared database, specify which tables your team is responsible for. (Include ERD models in the Appendix).
-
-### 3.5 Software System Attributes
-* **Instruction:** Define the Non-Functional Requirements (NFRs) for your module:
-  * **Reliability:** [Acceptable failure rates].
-  * **Security:** [Authentication methods, data encryption protocols].
-  * **Maintainability & Portability:** [Coding standards, documentation rules].
+| ID | Requirement | Business Rule |
+|----|-------------|---------------|
+| FR-01 | System shall generate a composite specimen code (LabCode + TestType + Serial) | Code must be globally unique |
+| FR-02 | System shall automatically assign specimen to destination lab based on test type | Assignment is automatic, no manual override |
+| FR-03 | System shall block workflow if drawing timestamp is missing | Cannot proceed to next phase without timestamp |
+| FR-04 | System shall validate fasting status for tests that require it | e.g., glucose test requires fasting = Yes |
+| FR-05 | System shall print a barcode label after successful registration | Label includes composite code and patient info |
+| FR-06 | System shall save registration to MediChain Core System | Data persisted after all validations pass |
+| FR-07 | System shall log an error and block if patient status is invalid | e.g., patient not fasting for glucose test |
 
 ---
 
-## 4. Appendices
-### Appendix A: Glossary & Models
-* **Instruction:** Include any Data Flow Diagrams (DFDs), Entity-Relationship Diagrams (ERDs), or detailed UI Mockups here.
+## 4. Non-Functional Requirements
 
-### Appendix B: GitHub Traceability Checklist
-* **Instruction for Team Members:** Before submitting this SRS, ensure that:
-  * [ ] Every User Story in Section 3.2 has a corresponding GitHub Issue.
-  * [ ] Every GitHub Issue has an appropriate label (e.g., `enhancement`, `requirement`).
-  * [ ] Pull Requests reference the Issue IDs (e.g., `Closes #12`). 
+| ID | Category | Requirement |
+|----|----------|-------------|
+| NFR-01 | Performance | Composite code generation in < 1 second |
+| NFR-02 | Reliability | System available 99.9% of the time |
+| NFR-03 | Security | All registration data encrypted at rest and in transit |
+| NFR-04 | Auditability | All actions logged with user, timestamp, and action type |
+| NFR-05 | Uniqueness | Composite code must be globally unique across all labs |
+
+---
+
+## 5. Use Cases
+
+### Use Case Diagram
+![Use Case Diagram](../images/use_case.png)
+> Figure 1: MediChain LAB-REG Use Case Diagram
+
+---
+
+### UC-01: Register Specimen Data
+
+| Field | Description |
+|-------|-------------|
+| **Actor** | Lab Receptionist / Technician |
+| **Precondition** | Patient is registered in the system |
+| **Main Flow** | 1. Enter patient info and test type → 2. Check fasting if required → 3. Generate composite code → 4. Assign destination lab → 5. Document drawing timestamp → 6. Print barcode → 7. Save registration |
+| **Alt Flow** | If fasting not confirmed → system blocks and logs error |
+| **Postcondition** | Specimen registered with unique code, status = Registered |
+
+---
+
+### UC-02: Validate Fasting Status
+
+| Field | Description |
+|-------|-------------|
+| **Actor** | System (Automatic) |
+| **Precondition** | Test type requires fasting (e.g., glucose) |
+| **Main Flow** | 1. Check patient fasting flag → 2. If Yes → proceed → 3. If No → reject and log error |
+| **Postcondition** | Registration blocked or allowed based on fasting status |
+
+---
+
+### UC-03: Generate Composite Code & Barcode
+
+| Field | Description |
+|-------|-------------|
+| **Actor** | System (Automatic) |
+| **Precondition** | Patient status validated successfully |
+| **Main Flow** | 1. Combine LabCode + TestType + UniqueSerial → 2. Verify uniqueness → 3. Generate barcode → 4. Print label |
+| **Postcondition** | Unique code assigned and barcode printed |
+
+---
+
+## 6. Process Modeling — Activity Diagram
+
+![Activity Diagram](../images/activity.png)
+> Figure 2: MediChain LAB-REG Activity Diagram
+
+The activity diagram shows the complete workflow from receiving a patient test request to saving the registration. Key decision points include the fasting validation and drawing timestamp check.
+
+---
+
+## 7. Data Design
+
+### 7.1 Entity-Relationship Diagram (ERD)
+
+![ERD](../images/erd.png)
+> Figure 3: MediChain LAB-REG ERD
+
+### 7.2 Database Schema
+
+| Table | Field | Type | Description |
+|-------|-------|------|-------------|
+| PATIENT | PatientID (PK) | INT | Unique patient identifier |
+| PATIENT | Name | VARCHAR | Patient full name |
+| PATIENT | FastingStatus | BOOLEAN | Yes/No — fasting confirmed |
+| TEST_TYPE | TestTypeID (PK) | INT | Unique test identifier |
+| TEST_TYPE | TestName | VARCHAR | Name of the lab test |
+| TEST_TYPE | FastingRequired | BOOLEAN | Whether fasting is required |
+| SPECIMEN_REGISTRATION | RegistrationID (PK) | INT | Unique registration ID |
+| SPECIMEN_REGISTRATION | CompositeCode | VARCHAR | Unique: LabCode+Type+Serial |
+| SPECIMEN_REGISTRATION | DrawingTimestamp | DATETIME | Exact time sample was drawn |
+| SPECIMEN_REGISTRATION | Status | ENUM | Registered / Blocked / Cancelled |
+| LABORATORY | LabID (PK) | INT | Unique lab identifier |
+| LABORATORY | LabCode | VARCHAR | Lab short code |
+
+---
+
+## 8. Class Diagram
+
+![Class Diagram](../images/class.png)
+> Figure 4: MediChain LAB-REG UML Class Diagram
+
+Main classes:
+- **SpecimenRegistrationUI** — entry point for the technician
+- **BarcodeService** — generates composite code and prints label
+- **PatientStatusValidator** — validates fasting status
+- **CoreSystemInterface** — communicates with MediChain Core
+- **TestType, Laboratory, SpecimenRegistration** — data entities
+
+---
+
+## 9. Dynamic Modeling — State Machine Diagram
+
+![State Machine](../images/state.png)
+> Figure 5: MediChain LAB-REG Specimen Registration State Diagram
+
+Specimen lifecycle:
+`Created` → `DetailsEntered` → `StatusVerified` → `CodeGenerated` → `SampleDrawn` → `Registered ✓`
+
+Edge cases:
+- `ValidationBlocked` — patient not fasting
+- `BlockedForNextPhase` — drawing timestamp missing
+- `Cancelled` — error during save
+
+---
+
+## 10. Integration Points
+
+| Direction | Module | Data Exchanged |
+|-----------|--------|----------------|
+| Inbound | Patient Registry | Patient info and fasting status |
+| Outbound | Module 3 (INV-VAL) | Specimen ID + Test Type for inventory check |
+| Outbound | Module 6 (LAB-TRK) | Specimen ID + Status for tracking |
+| Outbound | MediChain Core | Full registration record saved |
+
+---
+
+## 11. Business Rules
+
+| ID | Rule |
+|----|------|
+| BR-01 | Composite code must be unique: no two specimens share the same code |
+| BR-02 | Drawing timestamp must be documented before proceeding to next phase |
+| BR-03 | Tests requiring fasting must validate patient fasting status = Yes |
+| BR-04 | Destination lab assignment is automatic based on test type |
+| BR-05 | A blocked registration must be logged with reason and timestamp |
