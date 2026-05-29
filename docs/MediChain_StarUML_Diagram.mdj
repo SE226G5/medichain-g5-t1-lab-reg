@@ -1,0 +1,10 @@
+{
+  "_type": "Project",
+  "name": "MediChain UML Case Diagram",
+  "ownedElements": [
+    {
+      "_type": "UMLModel",
+      "name": "Module 1"
+    }
+  ]
+}
